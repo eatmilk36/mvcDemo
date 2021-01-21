@@ -1,0 +1,77 @@
+﻿@model mvcDEMO.Models.ViewModel.CategoriesViewModel
+
+@section scripts{
+    <script src="/Scripts/jquery.validate.js"></script>
+    <script src="/Scripts/jquery.validate.unobtrusive.js"></script>
+    <script>
+        function onSuccess(data) {
+            alert(data);
+        }
+    </script>
+}
+<h2>@ViewBag.Title</h2>
+<h3>@ViewBag.Message</h3>
+
+<p>Use this area to provide additional information.</p>
+
+
+@*@using (Ajax.BeginForm("About", "Home", new AjaxOptions { OnComplete = "onSuccess" }))
+    {*@
+<form>
+    @Html.AntiForgeryToken()
+    <div id="main" class="row">
+        <loading :active.sync="LoaderVisiable" :can-cancel="true"></loading>
+        <div>
+            <h3 class="color:red">{{firstName}}</h3>
+            <h3 class="color:red">@ViewBag.Title</h3>
+        </div>
+        <div class="col-md-12">
+            @Html.Label("類別名稱", new { @class = "col-sm-2 control-label" })
+            <div class="col-sm-10">
+                @Html.TextBoxFor(x => x.CategoryName, new { @class = "form-control", placeholder = "請輸入類別名稱" })
+                @Html.ValidationMessageFor(x => x.CategoryName, "", new { @class = "text-danger" })
+            </div>
+        </div>
+        <div class="col-md-12">
+            @Html.Label("類別描述", new { @class = "col-sm-2 control-label" })
+            <div class="col-sm-10">
+                @Html.TextAreaFor(x => x.Description, new { @class = "form-control", placeholder = "請輸入類別描述" })
+            </div>
+        </div>
+        <button v-on:click="LoginCheckAxios" type="button" class="btn btn-primary block full-width m-b">儲存</button>
+    </div>
+</form>
+@*}*@
+
+<script>
+    Vue.use(VueLoading);
+    new Vue({
+        el: "#main",
+        data: {
+            firstName: "Jeffrey",
+            LoaderVisiable: false
+        },
+        components: {
+            Loading: VueLoading
+        },
+        computed: {},
+        methods: {
+            LoginCheckAxios: function () {
+                if ($("form").valid()) {
+                    let loader = this.$loading.show({
+                        loader: 'dots'
+                    });
+
+                    axios.post("/Home/AboutCheck", new FormData($('form').get(0)))
+                        .then(function (response) {
+                            loader.hide();
+                            if (response.data.ststus)                                   //改表單送出
+                                swal("新增成功", "請點擊按鈕", "success").then(() => { window.location.href = "/Home/Index"; });
+                            else
+                                swal("新增失敗", "請點擊按鈕", "error");
+                        });
+                }
+            }
+        }
+    });
+</script>
