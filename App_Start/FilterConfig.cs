@@ -10,4 +10,12 @@ namespace mvcDEMO
             filters.Add(new HandleErrorAttribute());
         }
     }
+
+    public class ErrorFilter: HandleErrorAttribute
+    {
+        public override void OnException(ExceptionContext filterContext)
+        {
+            //這邊可以添加Error之後的程式碼
+        }
+    }
 }
